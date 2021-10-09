@@ -8,7 +8,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "prebuild": "cross-env NODE_ENV=test npm t",
-    "build": "node scripts/build.js",
+    "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run build",
@@ -27,7 +27,6 @@
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "cross-env": "^7.0.3",
-    "esbuild": "^0.13.4",
     "eslint": "^7.32.0",
     "jest": "^27.2.5",
     "prettier": "^2.4.1",
