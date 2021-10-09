@@ -7,7 +7,7 @@ AWS SDK is a second layer package built on top of [aws-sdk](https://www.npmjs.co
 Each method could be imported as its own module. For example, this is how you could use the method, `example`:
 
 ```javascript
-import example from "aws-sdk-plus/example";
+import example from "aws-sdk-plus/dist/example";
 
 example();
 ```
@@ -25,7 +25,7 @@ example();
 Takes in a method and converts it into an `APIGatewayProxyHandler`. It handles parsing the incoming event body, serializing the output, attaching a reasonable status code, and adding a CORs header. Use the environment variable `CORS_ORIGIN` to specify a specific origin to allow, otherwise it will use the wildcard, `"*"`.
 
 ```javascript
-import createAPIGatewayProxyHandler from "aws-sdk-plus/createAPIGatewayProxyHandler";
+import createAPIGatewayProxyHandler from "aws-sdk-plus/dist/createAPIGatewayProxyHandler";
 
 const lambda = ({ id }) => ({ user: { id, name: 'David Vargas' } });
 
