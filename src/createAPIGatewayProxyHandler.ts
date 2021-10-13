@@ -10,12 +10,20 @@ const createAPIGatewayProxyHandler =
         ...JSON.parse(event.body || "{}"),
         ...(event.queryStringParameters || {}),
       })
-    ).then((res) => ({
-      statusCode: 200,
-      body: JSON.stringify(res),
-      headers: {
-        "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "*",
-      },
-    }));
+    )
+      .then((res) => ({
+        statusCode: 200,
+        body: JSON.stringify(res),
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "*",
+        },
+      }))
+      .catch((e) => ({
+        statusCode: e.code || 500,
+        body: e.message,
+        headers: {
+          "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "*",
+        },
+      }));
 
 export default createAPIGatewayProxyHandler;
