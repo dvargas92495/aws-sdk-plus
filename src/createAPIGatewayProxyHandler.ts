@@ -9,7 +9,7 @@ const createAPIGatewayProxyHandler =
       fcn({
         ...JSON.parse(event.body || "{}"),
         ...(event.queryStringParameters || {}),
-        ...(event.requestContext.authorizer || {})
+        ...(event.requestContext.authorizer || {}),
       })
     )
       .then((res) => ({
