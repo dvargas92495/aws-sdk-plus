@@ -12,11 +12,13 @@ const createAPIGatewayProxyHandler =
         ...(event.requestContext.authorizer || {}),
       })
     )
-      .then((res) => ({
-        statusCode: 200,
+      .then(({ headers, code, ...res }) => ({
+        statusCode:
+          typeof code === "number" && code >= 200 && code < 400 ? code : 200,
         body: JSON.stringify(res),
         headers: {
           "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "*",
+          ...(typeof headers === "object" ? headers : {}),
         },
       }))
       .catch((e) => ({
@@ -24,6 +26,7 @@ const createAPIGatewayProxyHandler =
         body: e.message,
         headers: {
           "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "*",
+          ...(typeof e.headers === "object" ? e.headers : {}),
         },
       }));
 
