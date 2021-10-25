@@ -3,7 +3,7 @@
 /**
  * The server could not understand the request due to invalid syntax.
  */
-export class UserError extends Error {
+export class BadRequestError extends Error {
   constructor(arg: string) {
     super(arg);
   }
@@ -303,7 +303,7 @@ export class UnavailableForLegalReasonsError extends Error {
 /**
  * The server has encountered a situation it does not know how to handle.
  */
-export class ServorError extends Error {
+export class InternalServorError extends Error {
   constructor(arg: string) {
     super(arg);
   }
