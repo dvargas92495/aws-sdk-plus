@@ -22,7 +22,10 @@ const createAPIGatewayProxyHandler =
         },
       }))
       .catch((e) => ({
-        statusCode: e.code || 500,
+        statusCode:
+          typeof e.code === "number" && e.code >= 400 && e.code < 600
+            ? e.code
+            : 500,
         body: e.message,
         headers: {
           "Access-Control-Allow-Origin": process.env.CORS_ORIGIN || "*",
