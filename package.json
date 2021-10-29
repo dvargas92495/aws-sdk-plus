@@ -1,7 +1,7 @@
 {
   "name": "aws-sdk-plus",
   "description": "Description for aws-sdk-plus",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "license": "MIT",
   "repository": "dvargas92495/aws-sdk-plus",
   "main": "dist/index.js",
