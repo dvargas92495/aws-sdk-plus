@@ -22,7 +22,7 @@ example();
 
 ### createAPIGatewayProxyHandler
 
-Takes in a method and converts it into an `APIGatewayProxyHandler`. It handles parsing the incoming event body, serializing the output, attaching a reasonable status code, and adding a CORs header. Use the environment variable `CORS_ORIGIN` to specify a specific origin to allow, otherwise it will use the wildcard, `"*"`.
+Takes in a method and converts it into an `APIGatewayProxyHandler`. It handles parsing the incoming event body, serializing the output, attaching a reasonable status code, and adding a CORs header. Use the environment variable `HOST` to specify a specific origin to allow, otherwise it will use the wildcard, `"*"`.
 
 ```javascript
 import createAPIGatewayProxyHandler from "aws-sdk-plus/dist/createAPIGatewayProxyHandler";
