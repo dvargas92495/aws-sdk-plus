@@ -12,13 +12,19 @@ const createAPIGatewayProxyHandler =
     fcn: (e: T) => U | Promise<U>
   ): APIGatewayProxyHandler =>
   (event) =>
-    Promise.resolve(
-      fcn({
-        ...JSON.parse(event.body || "{}"),
-        ...(event.queryStringParameters || {}),
-        ...(event.requestContext.authorizer || {}),
-      })
-    )
+    new Promise<U>((resolve, reject) => {
+      try {
+        resolve(
+          fcn({
+            ...JSON.parse(event.body || "{}"),
+            ...(event.queryStringParameters || {}),
+            ...(event.requestContext.authorizer || {}),
+          })
+        );
+      } catch (e) {
+        reject(e);
+      }
+    })
       .then(({ headers, code, ...res }) => ({
         statusCode:
           typeof code === "number" && code >= 200 && code < 400 ? code : 200,
