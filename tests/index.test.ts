@@ -1,4 +1,4 @@
-import { createAPIGatewayProxyHandler } from "../src";
+import createAPIGatewayProxyHandler from "../src/createAPIGatewayProxyHandler";
 
 const MOCK_EVENT = {
   body: "",
