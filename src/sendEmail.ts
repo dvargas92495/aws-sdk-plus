@@ -10,11 +10,13 @@ const sendEmail = ({
   body,
   subject,
   from = support,
+  replyTo,
 }: {
   to?: string | string[];
   body: React.ReactElement | string;
   subject: string;
   from?: string;
+  replyTo?: string | string[];
 }): Promise<string> =>
   ses
     .sendEmail({
@@ -37,6 +39,7 @@ const sendEmail = ({
         },
       },
       Source: from,
+      ReplyToAddresses: typeof replyTo === "string" ? [replyTo] : replyTo,
     })
     .promise()
     .then((r) => r.MessageId);
