@@ -36,16 +36,19 @@ const createAPIGatewayProxyHandler =
             : {}),
         },
       }))
-      .catch((e) => ({
-        statusCode:
-          typeof e.code === "number" && e.code >= 400 && e.code < 600
-            ? e.code
-            : 500,
-        body: e.message,
-        headers: {
-          "Access-Control-Allow-Origin": process.env.HOST || "*",
-          ...(typeof e.headers === "object" ? excludeCors(e.headers) : {}),
-        },
-      }));
+      .catch((e) => {
+        console.error(e);
+        return {
+          statusCode:
+            typeof e.code === "number" && e.code >= 400 && e.code < 600
+              ? e.code
+              : 500,
+          body: e.message,
+          headers: {
+            "Access-Control-Allow-Origin": process.env.HOST || "*",
+            ...(typeof e.headers === "object" ? excludeCors(e.headers) : {}),
+          },
+        };
+      });
 
 export default createAPIGatewayProxyHandler;
