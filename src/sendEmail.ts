@@ -3,7 +3,11 @@ import type React from "react";
 import ReactDOMServer from "react-dom/server";
 
 const ses = new AWS.SES();
-const support = process.env.SUPPORT_EMAIL || "";
+const support =
+  process.env.SUPPORT_EMAIL ||
+  (process.env.HOST
+    ? `support@${process.env.HOST.replace(/^https?:\/\//, "")}`
+    : "");
 
 const sendEmail = ({
   to = support,
