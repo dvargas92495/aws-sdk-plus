@@ -13,7 +13,7 @@ const createAPIGatewayProxyHandler =
     fcn: (e: T) => U | Promise<U>
   ): APIGatewayProxyHandler =>
   (event) =>
-    new Promise<U>((resolve, reject) => {
+    new Promise<U | string>((resolve, reject) => {
       try {
         resolve(
           fcn({
@@ -26,19 +26,31 @@ const createAPIGatewayProxyHandler =
         reject(e);
       }
     })
-      .then(({ headers, code, ...res }) => {
-        const statusCode =
-          typeof code === "number" && code >= 200 && code < 400 ? code : 200;
-        return {
-          statusCode,
-          body: JSON.stringify(res),
-          headers: {
-            "Access-Control-Allow-Origin": process.env.ORIGIN || "*",
-            ...(typeof headers === "object" && headers
-              ? excludeCors(headers as Record<string, unknown>)
-              : {}),
-          },
-        };
+      .then((response) => {
+        if (typeof response === "object") {
+          const { headers, code, ...res } = response;
+
+          const statusCode =
+            typeof code === "number" && code >= 200 && code < 400 ? code : 200;
+          return {
+            statusCode,
+            body: JSON.stringify(res),
+            headers: {
+              "Access-Control-Allow-Origin": process.env.ORIGIN || "*",
+              ...(typeof headers === "object" && headers
+                ? excludeCors(headers as Record<string, unknown>)
+                : {}),
+            },
+          };
+        } else {
+          return {
+            statusCode: 200,
+            body: response,
+            headers: {
+              "Access-Control-Allow-Origin": process.env.ORIGIN || "*",
+            },
+          };
+        }
       })
       .catch((e) => {
         console.error(e);
