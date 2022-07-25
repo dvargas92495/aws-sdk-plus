@@ -1,4 +1,5 @@
 import type { APIGatewayProxyHandler } from "aws-lambda";
+import emailError from "./emailError";
 
 const excludeCors = (headers: Record<string, unknown>) =>
   Object.fromEntries(
@@ -25,30 +26,45 @@ const createAPIGatewayProxyHandler =
         reject(e);
       }
     })
-      .then(({ headers, code, ...res }) => ({
-        statusCode:
-          typeof code === "number" && code >= 200 && code < 400 ? code : 200,
-        body: JSON.stringify(res),
-        headers: {
-          "Access-Control-Allow-Origin": process.env.HOST || "*",
-          ...(typeof headers === "object" && headers
-            ? excludeCors(headers as Record<string, unknown>)
-            : {}),
-        },
-      }))
-      .catch((e) => {
-        console.error(e);
+      .then(({ headers, code, ...res }) => {
+        const statusCode =
+          typeof code === "number" && code >= 200 && code < 400 ? code : 200;
         return {
-          statusCode:
-            typeof e.code === "number" && e.code >= 400 && e.code < 600
-              ? e.code
-              : 500,
-          body: e.message,
+          statusCode,
+          body: JSON.stringify(res),
           headers: {
-            "Access-Control-Allow-Origin": process.env.HOST || "*",
-            ...(typeof e.headers === "object" ? excludeCors(e.headers) : {}),
+            "Access-Control-Allow-Origin": process.env.ORIGIN || "*",
+            ...(typeof headers === "object" && headers
+              ? excludeCors(headers as Record<string, unknown>)
+              : {}),
           },
         };
+      })
+      .catch((e) => {
+        console.error(e);
+        const statusCode =
+          typeof e.code === "number" && e.code >= 400 && e.code < 600
+            ? e.code
+            : 500;
+        const headers = {
+          "Access-Control-Allow-Origin": process.env.ORIGIN || "*",
+          ...(typeof e.headers === "object" ? excludeCors(e.headers) : {}),
+        };
+        const userResponse = {
+          statusCode,
+          body: e.message,
+          headers,
+        };
+        if (statusCode >= 400 && statusCode < 500) {
+          return userResponse;
+        }
+        return typeof e.name === "string" && e.name
+          ? emailError(e.name, e).then((id) => ({
+              statusCode,
+              body: `Unknown error - Message Id ${id}`,
+              headers,
+            }))
+          : userResponse;
       });
 
 export default createAPIGatewayProxyHandler;
