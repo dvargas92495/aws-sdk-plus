@@ -10,7 +10,7 @@ const excludeCors = (headers: Record<string, unknown>) =>
 
 const createAPIGatewayProxyHandler =
   <T extends Record<string, unknown>, U extends Record<string, unknown>>(
-    fcn: (e: T) => U | Promise<U>
+    fcn: (e: T) => string | U | Promise<U | string>
   ): APIGatewayProxyHandler =>
   (event) =>
     new Promise<U | string>((resolve, reject) => {
