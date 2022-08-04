@@ -8,15 +8,18 @@ const excludeCors = (headers: Record<string, unknown>) =>
     )
   );
 
+type Logic<T, U> = (e: T) => string | U | Promise<U | string>;
+
 const createAPIGatewayProxyHandler =
   <T extends Record<string, unknown>, U extends Record<string, unknown>>(
-    fcn: (e: T) => string | U | Promise<U | string>
+    args: Logic<T, U> | { logic: Logic<T, U>; allowedOrigins?: string[] }
   ): APIGatewayProxyHandler =>
   (event) =>
     new Promise<U | string>((resolve, reject) => {
       try {
+        const logic = typeof args === "function" ? args : args.logic;
         resolve(
-          fcn({
+          logic({
             ...JSON.parse(event.body || "{}"),
             ...(event.queryStringParameters || {}),
             ...(event.requestContext.authorizer || {}),
@@ -27,6 +30,14 @@ const createAPIGatewayProxyHandler =
       }
     })
       .then((response) => {
+        const allowedOrigins =
+          typeof args === "function" ? [] : args.allowedOrigins || [];
+        const requestOrigin =
+          event.headers.origin || event.headers.Origin || "";
+        const cors = allowedOrigins.includes(requestOrigin)
+          ? requestOrigin
+          : process.env.ORIGIN || "*";
+
         if (typeof response === "object") {
           const { headers, code, ...res } = response;
 
@@ -36,7 +47,7 @@ const createAPIGatewayProxyHandler =
             statusCode,
             body: JSON.stringify(res),
             headers: {
-              "Access-Control-Allow-Origin": process.env.ORIGIN || "*",
+              "Access-Control-Allow-Origin": cors,
               ...(typeof headers === "object" && headers
                 ? excludeCors(headers as Record<string, unknown>)
                 : {}),
@@ -47,7 +58,7 @@ const createAPIGatewayProxyHandler =
             statusCode: 200,
             body: response,
             headers: {
-              "Access-Control-Allow-Origin": process.env.ORIGIN || "*",
+              "Access-Control-Allow-Origin": cors,
             },
           };
         }
