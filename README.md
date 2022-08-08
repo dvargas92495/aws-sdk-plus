@@ -1,3 +1,7 @@
+# DEPRECATED
+
+This package has been deprecated and methods have migrated over to my personal component library - https://www.npmjs.com/package/@dvargas92495/app
+
 # aws-sdk-plus
 
 AWS SDK is a second layer package built on top of [aws-sdk](https://www.npmjs.com/package/aws-sdk). It exposes several common helper functions to make the sdk easier to use. The package exports each method as it's own module in a function-per-file style.
